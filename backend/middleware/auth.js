@@ -12,9 +12,8 @@ export default async function authMiddleware(req, res, next) {
             message: 'not authorized, token mmissing'
         })
     }
-}
 
-const token = authHeader.split(' ')[1];
+    const token = authHeader.split(' ')[1];
 
 
 //VERIFY
@@ -39,3 +38,8 @@ try {
         message: 'Token invalid or expired'
     })
 }
+
+
+
+}
+

@@ -55,7 +55,7 @@ export async function createResult(req, res) {
 
 //LIST THE RESULT
 
-export async function listResult(res, req) {
+export async function listResults(res, req) {
 try {
     if(!req.user || !res.user.id) {
         return res.status(401).json({

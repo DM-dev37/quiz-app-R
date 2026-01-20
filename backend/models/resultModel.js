@@ -5,7 +5,7 @@ const performanceEnum = ["Excellent", "Good", "Average", "Needs Work"];
 const ResultSchema = new mongoose.Schema(
   {
     user: {
-        type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true
+        type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false
     },
 
     title:{
