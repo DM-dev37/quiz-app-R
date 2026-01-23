@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { navbarStyles } from "../assets/dummyStyles";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Award, LogIn, LogOut } from "lucide-react";
+import { Award, LogIn, LogOut, Menu, X } from "lucide-react";
 
 function Navbar({ logoSrc }) {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ function Navbar({ logoSrc }) {
     try {
       localStorage.removeItem("authToken");
       localStorage.clear();
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
       //ignorer tous les erreures
     }
@@ -23,6 +24,7 @@ function Navbar({ logoSrc }) {
     setMenuOpen(false);
     try {
       navigate("/login");
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
       window.location.href = "/login";
     }
@@ -87,9 +89,57 @@ function Navbar({ logoSrc }) {
               )}
             </div>
 
-            <div className={navbarStyles.mobileMenuContainer}></div>
+            <div className={navbarStyles.mobileMenuContainer}>
+              <button
+                className={navbarStyles.menuToggleButton}
+                onClick={() => setMenuOpen((s) => !s)}
+              >
+                {menuOpen ? (
+                  <X className={navbarStyles.menuIcon} />
+                ) : (
+                  <Menu className={navbarStyles.menuIcon} />
+                )}
+              </button>
+
+              {menuOpen && (
+                <div className={navbarStyles.mobileMenuPanel}>
+                  <ul>
+                    <li>
+                      <NavLink
+                        to="/result"
+                        className={navbarStyles.mobileMenuItem}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Award className={navbarStyles.mobileMenuIcon} />
+                      </NavLink>
+                    </li>
+
+                    {loggedIn ? (
+                      <li>
+                        <button
+                          className={navbarStyles.mobileMenuItem}
+                          onClick={handleLogout}
+                        >
+                          <LogOut className={navbarStyles.mobileMenuIcon} />
+                          Logout
+                        </button>
+                      </li>
+                    ) : (
+                      <NavLink
+                        to="/login"
+                        className={navbarStyles.mobileMenuItem}
+                        onClick={() => setLoggeIn(false)}
+                      >
+                        <LogIn className={navbarStyles.mobileMenuIcon} />
+                      </NavLink>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
         </div>
+        <style>{navbarStyles.animations}</style>
       </nav>
     </div>
   );
