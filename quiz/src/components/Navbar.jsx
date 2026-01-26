@@ -1,12 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { navbarStyles } from "../assets/dummyStyles";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Award, LogIn, LogOut, Menu, X } from "lucide-react";
 
 function Navbar({ logoSrc }) {
   const navigate = useNavigate();
-  const [loggedIn, setLoggeIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  //useEffect hook to show the login state change
+
+  useEffect(() => {
+    try {
+      const u = localStorage.getItem("authToken");
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLoggedIn(!!u);
+    } catch (e) {
+      setLoggedIn(false);
+    }
+
+    const handler = (ev) => {
+      const detailUser = ev?.detail?.user ?? null;
+      setLoggedIn(!!detailUser);
+    };
+    window.addEventListener("authChanged", handler);
+  }, []);
 
   //LOGOUT FUNCTION
   const handleLogout = () => {
@@ -128,7 +146,7 @@ function Navbar({ logoSrc }) {
                       <NavLink
                         to="/login"
                         className={navbarStyles.mobileMenuItem}
-                        onClick={() => setLoggeIn(false)}
+                        onClick={() => setLoggedIn(false)}
                       >
                         <LogIn className={navbarStyles.mobileMenuIcon} />
                       </NavLink>

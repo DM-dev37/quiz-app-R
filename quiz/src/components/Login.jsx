@@ -37,12 +37,13 @@ function Login({ onLoginSuccess = null }) {
 
       try {
         data = await resp.json();
+        // eslint-disable-next-line no-unused-vars
       } catch (e) {
         //ignorer
       }
 
       if (!resp.ok) {
-        const msg = data?.message || "Lgin failed";
+        const msg = data?.message || "Login failed";
         setSubmitError(msg);
         return;
       }
@@ -54,6 +55,7 @@ function Login({ onLoginSuccess = null }) {
             "currentUser",
             JSON.stringify(data.user || { email: payload.email })
           );
+          // eslint-disable-next-line no-unused-vars
         } catch (err) {
           //ignore all the error
         }
@@ -92,7 +94,7 @@ function Login({ onLoginSuccess = null }) {
       </Link>
 
       <div className={loginStyles.formContainer}>
-        <form className={loginStyles.form} noValidate onSubmit={handleSubmit}>
+        <form className={loginStyles.form} onSubmit={handleSubmit}>
           <div className={loginStyles.formWrapper}>
             <div className={loginStyles.animatedBorder}>
               <div className={loginStyles.formContent}>
@@ -206,7 +208,6 @@ function Login({ onLoginSuccess = null }) {
                   <div className={loginStyles.signupContainer}>
                     <div className={loginStyles.signupContainer}>
                       <span className={loginStyles.signupText}>
-                        {" "}
                         Don't have an account
                       </span>
                       <Link to="/signup" className={loginStyles.signupLink}>
@@ -220,6 +221,8 @@ function Login({ onLoginSuccess = null }) {
           </div>
         </form>
       </div>
+
+      <style>{loginStyles.animations}</style>
     </div>
   );
 }
