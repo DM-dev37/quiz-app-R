@@ -3,7 +3,7 @@ import { sidebarStyles } from '../assets/dummyStyles'
 import questionData from '../assets/dummydata'
 import {axios} from 'axios';
 import {toast} from 'react-toastify';
-import { BookOpen, Code, Coffee, Cpu, Database, Globe, Layout, Sparkles, Star, Target, Terminal, Zap } from 'lucide-react';
+import { BookOpen, ChevronDown, ChevronRight, Code, Coffee, Cpu, Database, Globe, Layout, Sparkles, Star, Target, Terminal, X, Zap } from 'lucide-react';
 
 const API_BASE = "http://localhost:4000";
 
@@ -297,22 +297,65 @@ useEffect(() => {
 
       <div className={sidebarStyles.mainContainer}>
         <aside className={`${sidebarStyles.sidebar} ${isSidebareOpen ? 'translate-x-0' : 'translate-x-full'}`} ref={asideRef}>
-<div className={sidebarStyles.sidebarHeader}></div>
-<div className={sidebarStyles.headerDecoration1}></div>
-<div className={sidebarStyles.headerDecoration1}></div>
+          <div className={sidebarStyles.sidebarHeader}>
+            <div className={sidebarStyles.headerDecoration1}></div>
+            <div className={sidebarStyles.headerDecoration1}></div>
 
-<div className={sidebarStyles.headerContent}>
-  <div className={sidebarStyles.logoContainer}>
-    <div className={sidebarStyles.logoIcon}>
-      <BookOpen className='text-indigo-700' size={28}/>
-    </div>
+            <div className={sidebarStyles.headerContent}>
+              <div className={sidebarStyles.logoContainer}>
+                  <div className={sidebarStyles.logoIcon}>
+                    <BookOpen className='text-indigo-700' size={28}/>
+                  </div>
 
-    <div>
-      <h1 className={sidebarStyles.logoTitle}>Teck quiz master</h1>
-      <p className={sidebarStyles.logoSubtitle}>Test your knowledge & improve skills</p>
-    </div>
-  </div>
-</div>
+                  <div>
+                    <h1 className={sidebarStyles.logoTitle}>Teck quiz master</h1>
+                    <p className={sidebarStyles.logoSubtitle}>Test your knowledge & improve skills</p>
+                  </div>
+                  </div>
+
+                  <button onClick={toggleSidebar} className={sidebarStyles.closeButton}>
+                  <X size= {20}/>
+                  </button>    
+              </div>
+            </div>  
+
+            <div className={sidebarStyles.sidebarContent}>
+              <div className={sidebarStyles.technologiesHeader}>
+                <h2 className={sidebarStyles.technologiesTitle}>Technologies</h2>
+                <span className={sidebarStyles.technologiesCount}>{technologies.length} options</span>
+              </div>
+
+              {technologies.map((tech) => (
+                <div key={tech.id} className={sidebarStyles.techItem} data-tech={tech.id}>
+                  <button onClick={() => handleTechSelect(tech.id)} className={`${sidebarStyles.techButton}
+                   ${selectedTech === tech.id ? `${tech.color} ${sidebarStyles.techButtonSelected}` : sidebarStyles.techButtonNormal}`}>
+                    
+                    <div className={sidebarStyles.techButtonContent}>
+                      <span className={`${sidebarStyles.techIcon} ${tech.color}`}>
+                        {tech.icon}
+                      </span>
+                      <span className={sidebarStyles.techName}>{tech.name}</span>
+                    </div>
+
+                    {selectedTech === tech.id ? (
+                      <ChevronDown size ={18} className='text-current'/>
+                    ) : (<ChevronRight size={18} className='text-current'/>)}
+
+                  </button>
+
+                   {selectedTech === tech.id && (
+                    <div className={sidebarStyles.levelsContainer}>
+                      <h3 className={sidebarStyles.levelsTitle}>
+                        <span>Select Difficulty</span>
+                        <span className={sidebarStyles.techBadge}>
+                          {technologies.find((t) =>t.id === selectedTech).name}
+                        </span>
+                      </h3>
+                    </div>
+                   )} 
+                </div>
+              ))}
+            </div>
         </aside>
       </div>
     </div>
