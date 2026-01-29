@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { sidebarStyles } from '../assets/dummyStyles'
 import questionData from '../assets/dummydata'
-import { Code, Coffee, Cpu, Database, Globe, Layout, Star, Target, Terminal, Zap } from 'lucide-react';
+import {axios} from 'axios';
+import {toast} from 'react-toastify';
+import { BookOpen, Code, Coffee, Cpu, Database, Globe, Layout, Sparkles, Star, Target, Terminal, Zap } from 'lucide-react';
 
 const API_BASE = "http://localhost:4000";
 
@@ -200,11 +202,119 @@ const calculateScore = () => {
 }
 
 // reset the quiz
+const resetQuiz = () => {
+  setCurrentQuestion(0);
+  setUserAnsers({});
+    setShowResults(false);
+    submitttedRef.current = false;
+}
 
+const questions = getQuestions();
+const currentQ = questions[currentQuestion];
+const score = calculateScore()
+
+const getPerformanceStatut = () => {
+  if(score.percentage >= 90) return{
+    text: 'OutStanding!',
+    color: 'bg-gradien-to-r from-amber-200 to-amber-300',
+    icon: <Sparkles className='text-amber-800'/>
+  }
+  if(score.percentage >= 75) return{
+    text: 'Exellent!',
+    color: 'bg-gradien-to-r from-blue-200 to-indigo-200',
+    icon: <Sparkles className='text-blue-800'/>
+  }
+  if(score.percentage >= 60) return{
+    text: 'Good job!',
+    color: 'bg-gradien-to-r from-green-200 to-teal-200',
+    icon: <Sparkles className='text-green-800'/>
+  };
+  return {
+    text: 'keep practicing',
+    color:'bg-gradien-to-r from-gray-200 to-gray-300',
+    icon:<BookOpen className='text-gray-800' />
+  }
+}
+
+const performance = getPerformanceStatut();
+const toggleSidebar = () => setIsSidebareOpen((prev) => !prev); // toggle sidebar for smaller screen
+const getAuthHeader = () => {
+  const token = localStorage.getItem('token')  || 
+  localStorage.getItem('authToken') || null;
+  return token? { Authorization: `Bearer ${token}`} : {};
+};
+
+const submitResult = async () => {
+  if(submitResult.current) return;
+  if(!selectedTech || !selectedLever) return;
+
+  const payload = {
+    title:`${selectedTech.toUppercase() + selectedLever.slice(1)} quiz`,
+    technologies: selectedTech,
+    level: selectedLever,
+    totalQuestion: score.total,
+    correct: score.correct,
+    wrong: score.total - score.correct,
+  };
+
+  try {
+    submitttedRef.current = true;
+    toast.info('saving your results...');
+    const res = await axios.post(`${API_BASE}/api/results/`, payload, {
+      headers: {
+        'Content-Type': 'apllication/json',
+        ...getAuthHeader(),
+      },
+      timeOut: 10000,
+    })
+
+    if(res.data && res.data.success) {
+      toast.success('Result saved!');
+    } else {
+      toast.warn('result not saved')
+      submitttedRef.current = false;
+    }
+  } catch (error) {
+    submitttedRef.current = false;
+    console.error('error saving result:',
+      err?.reponse?.data || err.message || err
+    );
+    toast.error('could not save result. check console or network.');
+  }
+}
+
+useEffect(() => {
+  if(showResults) {
+    submitResult();
+  }
+}, [showResults]);
 
   return (
     <div className={sidebarStyles.pageContainer}>
-      
+      {isSidebareOpen && (
+        <div onClick={() => window.innerWidth < 768 && setIsSidebareOpen(false)} className={sidebarStyles.mobileOverlay}></div>
+      )}
+
+      <div className={sidebarStyles.mainContainer}>
+        <aside className={`${sidebarStyles.sidebar} ${isSidebareOpen ? 'translate-x-0' : 'translate-x-full'}`} ref={asideRef}>
+<div className={sidebarStyles.sidebarHeader}></div>
+<div className={sidebarStyles.headerDecoration1}></div>
+<div className={sidebarStyles.headerDecoration1}></div>
+
+<div className={sidebarStyles.headerContent}>
+  <div className={sidebarStyles.logoContainer}>
+    <div className={sidebarStyles.logoIcon}>
+      <BookOpen className='text-indigo-700' size={28}/>
+    </div>
+
+    <div>
+      <h1 className={sidebarStyles.logoTitle}>Teck quiz master</h1>
+      <p className={sidebarStyles.logoSubtitle}>Test your knowledge & improve skills</p>
+    </div>
+  </div>
+</div>
+        </aside>
+      </div>
     </div>
   )
 }
