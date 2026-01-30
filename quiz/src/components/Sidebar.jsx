@@ -314,6 +314,7 @@ function Sidebar() {
     if (showResults) {
       submitResult();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showResults]);
 
   return (
@@ -332,7 +333,7 @@ function Sidebar() {
         >
           <div className={sidebarStyles.sidebarHeader}>
             <div className={sidebarStyles.headerDecoration1}></div>
-            <div className={sidebarStyles.headerDecoration1}></div>
+            <div className={sidebarStyles.headerDecoration2}></div>
 
             <div className={sidebarStyles.headerContent}>
               <div className={sidebarStyles.logoContainer}>
