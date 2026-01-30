@@ -15,6 +15,7 @@ function Navbar({ logoSrc }) {
       const u = localStorage.getItem("authToken");
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoggedIn(!!u);
+      // eslint-disable-next-line no-unused-vars
     } catch (e) {
       setLoggedIn(false);
     }
@@ -37,7 +38,7 @@ function Navbar({ logoSrc }) {
     }
 
     window.dispatchEvent(
-      new CustomEvent("authChanged", { detail: { user: null } })
+      new CustomEvent("authChanged", { detail: { user: null } }),
     );
     setMenuOpen(false);
     try {
