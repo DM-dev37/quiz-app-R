@@ -1,12 +1,12 @@
 import React from "react";
 import Navbar from "../components/Navbar";
-import MyReslts from "../components/MyReslts";
+import MyReslt from "../components/MyReslt";
 
 function MyResultPage() {
   return (
     <div>
       <Navbar />
-      <MyReslts />
+      <MyReslt />
     </div>
   );
 }
