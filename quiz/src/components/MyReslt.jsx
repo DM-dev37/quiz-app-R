@@ -210,10 +210,112 @@ function MyReslt({ apiBase = "http://localhost: 4000" }) {
                   </button>
                 ))}
             </div>
+
+            <div className={resultStyles.filterStatus}>
+              {selectedTechnology === "all"
+                ? "show all Technologies"
+                : `Filtering: ${selectedTechnology}`}
+            </div>
+          </div>
+        </div>
+
+        {loadind ? (
+          <div className={resultStyles.loadingContainer}>
+            <div className={resultStyles.loadingSpinner}>
+              <div className={resultStyles.loadingText}>Loading results...</div>
+            </div>
+          </div>
+        ) : (
+          <div>
+            {Object.entries(grouped).map(([track, items]) => (
+              <section key={track} className={resultStyles.trackSection}>
+                <h2 className={resultStyles.trackTitle}>Track</h2>
+
+                <div className={resultStyles.resultsGrid}>
+                  {items.map((r) => (
+                    <StripCard key={makeKey(r)} item={r} />
+                  ))}
+                </div>
+              </section>
+            ))}
+
+            {Array.isArray(results) && results.length === 0 && (
+              <div className={resultStyles.emptyState}>
+                Not result yet. Take a quiz to see results here
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+//TRIP CARD
+function StripCard({ item }) {
+  const percent = item.totalQuestions
+    ? Math.round((Number(item.correct) / Number(item.totalQuestions)) * 100)
+    : 0;
+
+  const getLevel = (it) => {
+    const id = (it.id || "").toString().toLowerCase();
+    const title = (it.title || "").toString().toLowerCase();
+    if (id.includes("basic") || title.includes(" basic"))
+      return { letter: "B", style: resultStyles.levelBasic };
+    if (id.includes("intermediate") || title.includes(" intermediate"))
+      return { letter: "I", style: resultStyles.levelIntermediate };
+    return { letter: "A", style: resultStyles.levelAdvanced };
+  };
+
+  const level = getLevel(item);
+
+  {
+    item.timeSpent ? ` • ${item.timeSpent}` : "";
+  }
+
+  return (
+    <article className={resultStyles.card}>
+      <div className={resultStyles.cardAccent}></div>
+
+      <div className={resultStyles.cardContent}>
+        <div className={resultStyles.cardHeader}>
+          <div className={resultStyles.cardInfo}>
+            <div
+              className={`${resultStyles.levelAvatar} ${resultStyles.style}`}
+            >
+              {level.letter}
+            </div>
+
+            <div className={resultStyles.cardText}>
+              {item.totalQuestions} Qs
+              {item.timeSpent ? `${item.timeSpent}` : ""}
+            </div>
+          </div>
+
+          <div className={resultStyles.cardPerformance}>
+            <div className={resultStyles.performanceLabel}> Performance</div>
+            <div className={resultStyles.badgeContainer}>
+              <Badge percent={percent} />
+            </div>
+          </div>
+        </div>
+
+        <div className={resultStyles.cardStats}>
+          <div className={resultStyles.statItem}>
+            Correct:
+            <span className={resultStyles.statNumber}>{item.correct}</span>
+          </div>
+          <div className={resultStyles.statItem}>
+            Wrong:
+            <span className={resultStyles.statNumber}>{item.wrong}</span>
+          </div>
+          <div className={resultStyles.statItem}>
+            Score:
+            <span className={resultStyles.statNumber}>{percent} %</span>
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 
