@@ -10,14 +10,14 @@ const Badge = ({ percent }) => {
     return <span className={resultStyles.badgeExcellent}> Execellent</span>;
   if (percent >= 65)
     return <span className={resultStyles.badgeGood}> Good</span>;
-  if (percent >= 85)
+  if (percent >= 45)
     return <span className={resultStyles.badgeAverage}> Average</span>;
   return <span className={resultStyles.badgeNeedsWork}>Needs work</span>;
 };
 
-function MyReslt({ apiBase = "http://localhost: 4000" }) {
-  const [results, setResuls] = useState(null);
-  const [loadind, setLoading] = useState(true);
+function MyReslt({ apiBase = "http://localhost:4000" }) {
+  const [results, setResults] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedTechnology, setSelectedTechnology] = useState("all"); //for filter
   const [technology, setTechnology] = useState([]);
@@ -26,7 +26,7 @@ function MyReslt({ apiBase = "http://localhost: 4000" }) {
   const getAuthHeader = useCallback(() => {
     const token =
       localStorage.getItem("token") || localStorage.getItem("token") || null;
-    return token ? { Authorization: `bearer ${token}` } : {};
+    return token ? { Authorization: `Bearer ${token}` } : {};
   }, []);
 
   //Effect: fecht result when component or when selectedtechnology change
@@ -39,17 +39,17 @@ function MyReslt({ apiBase = "http://localhost: 4000" }) {
       try {
         const q =
           tech && tech.toLocaleLowerCase() !== "all"
-            ? `technology= ${encodeURIComponent(tehc)} `
+            ? `?technology= ${encodeURIComponent(tech)} `
             : "";
         const res = await axios.get(`${apiBase}/api/results${q}`, {
-          headers: { "content-type": "application/json", ...getAuthHeader() },
+          headers: { "content-Type": "application/json", ...getAuthHeader() },
           timeout: 10000,
         });
         if (!mounted) return;
         if (res.status === 200 && res.data && res.data.success) {
-          setResuls(Array.isArray(res.data.result) ? res.data.results : []);
+          setResults(Array.isArray(res.data.result) ? res.data.results : []);
         } else {
-          setResuls([]);
+          setResults([]);
           toast.warn("unexpected Server response while fetching result");
         }
       } catch (err) {
@@ -58,16 +58,16 @@ function MyReslt({ apiBase = "http://localhost: 4000" }) {
           err?.response?.data || err.message || err,
         );
         if (!mounted) return;
-        if (err?.response?.satus === 401) {
+        if (err?.response?.status === 401) {
           setError("not authentificate. Please log in to view results.");
           toast.error("not authentificate. Please login");
         } else {
           setError("Could not load result from server.");
           toast.error("could not load result from server");
-          setResuls([]);
+          setResults([]);
         }
-        if (mounted) setLoading(false);
       }
+      if (mounted) setLoading(false);
     };
 
     fetchtResults(selectedTechnology);
@@ -83,13 +83,13 @@ function MyReslt({ apiBase = "http://localhost: 4000" }) {
     const fetchAllForTechList = async () => {
       try {
         const res = await axios.get(`${apiBase}/api/results`, {
-          headers: { "content-type": "application/json", ...getAuthHeader() },
-          time: 10000,
+          headers: { "content-Type": "application/json", ...getAuthHeader() },
+          timeout: 10000,
         });
         if (!mounted) return;
         if (res.status === 200 && res.data && res.data.success) {
           const all = Array.isArray(res.data.results) ? res.data.results : [];
-          const set = new set();
+          const set = new Set();
           all.forEach((r) => {
             if (r.technology) set.add(r.technology);
           });
@@ -113,7 +113,6 @@ function MyReslt({ apiBase = "http://localhost: 4000" }) {
     return () => {
       mounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiBase, getAuthHeader]);
 
   const makeKey = (r) => (r && r._id ? r._id : `${r.id} || ${r.title}`);
@@ -219,7 +218,7 @@ function MyReslt({ apiBase = "http://localhost: 4000" }) {
           </div>
         </div>
 
-        {loadind ? (
+        {loading ? (
           <div className={resultStyles.loadingContainer}>
             <div className={resultStyles.loadingSpinner}>
               <div className={resultStyles.loadingText}>Loading results...</div>
