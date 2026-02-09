@@ -9,7 +9,7 @@ function RequiereAuth({ children }) {
   const isLoggedIn = Boolean(localStorage.getItem("authToken"));
   const location = useLocation();
 
-  if (isLoggedIn) {
+  if (!isLoggedIn) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

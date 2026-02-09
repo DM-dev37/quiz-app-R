@@ -31,20 +31,20 @@ const API_BASE = "http://localhost:4000";
 
 function Sidebar() {
   const [selectedTech, setSelectedTech] = useState(null);
-  const [selectedLever, setSelectedLever] = useState(null);
+  const [selectedLevel, setSelectedLevel] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [userAnswers, setUserAnsers] = useState({});
+  const [userAnswers, setUserAnswers] = useState({});
   const [showResults, setShowResults] = useState(false);
 
-  const submitttedRef = useRef(false);
-  const [isSidebareOpen, setIsSidebareOpen] = useState(false);
+  const submittedRef = useRef(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const asideRef = useRef(null);
 
   // if the inner widht is greater than 768px then it will call function
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) setIsSidebareOpen(true);
-      else setIsSidebareOpen(false);
+      if (window.innerWidth >= 768) setIsSidebarOpen(true);
+      else setIsSidebarOpen(false);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -54,15 +54,15 @@ function Sidebar() {
   //if the sidebare is open and inner width is less than 768px then it will collaspse
   useEffect(() => {
     if (window.innerWidth < 768) {
-      if (isSidebareOpen) document.body.style.overflow = "hidden";
-      else document.body.style.owerflow = "";
+      if (isSidebarOpen) document.body.style.overflow = "hidden";
+      else document.body.style.overflow = "";
     } else {
-      document.body.style.owerflow = "";
+      document.body.style.overflow = "";
     }
     return () => {
       document.body.style.overflow = "";
     };
-  }, [isSidebareOpen]);
+  }, [isSidebarOpen]);
 
   //techs and levers
   const technologies = [
@@ -156,32 +156,32 @@ function Sidebar() {
   const handleTechSelect = (techId) => {
     if (selectedTech === techId) {
       setSelectedTech(null); //all the initial value are defined here
-      setSelectedLever(null);
+      setSelectedLevel(null);
     } else {
       setSelectedTech(techId);
-      setSelectedLever(null);
+      setSelectedLevel(null);
     }
     setCurrentQuestion(0);
-    setUserAnsers({});
+    setUserAnswers({});
     setShowResults(false);
-    submitttedRef.current = false;
+    submittedRef.current = false;
 
-    if (window.innerWidth < 768) setIsSidebareOpen(true);
+    if (window.innerWidth < 768) setIsSidebarOpen(true);
 
     setTimeout(() => {
-      const el = asideRef.current?.querrySelector(`[data-tech="${techId}"]`);
-      if (el) el.scrollIntoview({ behavior: "smooth", block: "center" });
+      const el = asideRef.current?.querySelector(`[data-tech="${techId}"]`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 120);
   };
 
-  const handleLeverlSelect = (leverId) => {
-    setSelectedLever(leverId);
+  const handleLevelSelect = (leverId) => {
+    setSelectedLevel(leverId);
     setCurrentQuestion(0);
-    setUserAnsers({});
+    setUserAnswers({});
     setShowResults(false);
-    submitttedRef.current = false;
+    submittedRef.current = false;
 
-    if (window.innerWidth < 768) setIsSidebareOpen(false);
+    if (window.innerWidth < 768) setIsSidebarOpen(false);
   };
 
   const handleAnswerSelect = (answerIndex) => {
@@ -189,9 +189,9 @@ function Sidebar() {
       ...userAnswers,
       [currentQuestion]: answerIndex,
     };
-    setUserAnsers(newAnswers);
+    setUserAnswers(newAnswers);
     setTimeout(() => {
-      if (currentQuestion < getQuestions().lenght - 1) {
+      if (currentQuestion < getQuestions().length - 1) {
         setCurrentQuestion((prev) => prev + 1);
       } else {
         setShowResults(true);
@@ -200,8 +200,8 @@ function Sidebar() {
   };
 
   const getQuestions = () => {
-    if (!selectedTech || !selectedLever) return [];
-    return questionData[selectedTech]?.[selectedLever] || [];
+    if (!selectedTech || !selectedLevel) return [];
+    return questionData[selectedTech]?.[selectedLevel] || [];
   };
 
   //calulate the score
@@ -225,9 +225,9 @@ function Sidebar() {
   // // reset the quiz
   const resetQuiz = () => {
     setCurrentQuestion(0);
-    setUserAnsers({});
+    setUserAnswers({});
     setShowResults(false);
-    submitttedRef.current = false;
+    submittedRef.current = false;
   };
 
   const questions = getQuestions();
@@ -238,30 +238,30 @@ function Sidebar() {
     if (score.percentage >= 90)
       return {
         text: "OutStanding!",
-        color: "bg-gradien-to-r from-amber-200 to-amber-300",
+        color: "bg-gradient-to-r from-amber-200 to-amber-300",
         icon: <Sparkles className="text-amber-800" />,
       };
     if (score.percentage >= 75)
       return {
-        text: "Exellent!",
-        color: "bg-gradien-to-r from-blue-200 to-indigo-200",
+        text: "Excellent!",
+        color: "bg-gradient-to-r from-blue-200 to-indigo-200",
         icon: <Trophy className="text-blue-800" />,
       };
     if (score.percentage >= 60)
       return {
         text: "Good job!",
-        color: "bg-gradien-to-r from-green-200 to-teal-200",
+        color: "bg-gradient-to-r from-green-200 to-teal-200",
         icon: <Award className="text-green-800" />,
       };
     return {
       text: "keep practicing",
-      color: "bg-gradien-to-r from-gray-200 to-gray-300",
+      color: "bg-gradient-to-r from-gray-200 to-gray-300",
       icon: <BookOpen className="text-gray-800" />,
     };
   };
 
   const performance = getPerformanceStatut();
-  const toggleSidebar = () => setIsSidebareOpen((prev) => !prev); // toggle sidebar for smaller screen
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev); // toggle sidebar for smaller screen
   const getAuthHeader = () => {
     const token =
       localStorage.getItem("token") ||
@@ -272,36 +272,36 @@ function Sidebar() {
 
   const submitResult = async () => {
     if (submitResult.current) return;
-    if (!selectedTech || !selectedLever) return;
+    if (!selectedTech || !selectedLevel) return;
 
     const payload = {
-      title: `${selectedTech.toUppercase() + selectedLever.slice(1)} quiz`,
+      title: `${selectedTech.toUpperCase() + selectedLevel.slice(1)} quiz`,
       technologies: selectedTech,
-      level: selectedLever,
+      level: selectedLevel,
       totalQuestion: score.total,
       correct: score.correct,
       wrong: score.total - score.correct,
     };
 
     try {
-      submitttedRef.current = true;
+      submittedRef.current = true;
       toast.info("saving your results...");
       const res = await axios.post(`${API_BASE}/api/results/`, payload, {
         headers: {
-          "Content-Type": "apllication/json",
+          "Content-Type": "application/json",
           ...getAuthHeader(),
         },
-        timeOut: 10000,
+        timeout: 10000,
       });
 
       if (res.data && res.data.success) {
         toast.success("Result saved!");
       } else {
         toast.warn("result not saved");
-        submitttedRef.current = false;
+        submittedRef.current = false;
       }
     } catch (err) {
-      submitttedRef.current = false;
+      submittedRef.current = false;
       console.error(
         "error saving result:",
         err?.reponse?.data || err.message || err,
@@ -319,16 +319,16 @@ function Sidebar() {
 
   return (
     <div className={sidebarStyles.pageContainer}>
-      {isSidebareOpen && (
+      {isSidebarOpen && (
         <div
-          onClick={() => window.innerWidth < 768 && setIsSidebareOpen(false)}
+          onClick={() => window.innerWidth < 768 && setIsSidebarOpen(false)}
           className={sidebarStyles.mobileOverlay}
         ></div>
       )}
 
       <div className={sidebarStyles.mainContainer}>
         <aside
-          className={`${sidebarStyles.sidebar} ${isSidebareOpen ? "translate-x-0" : "translate-x-full"}`}
+          className={`${sidebarStyles.sidebar} ${isSidebarOpen ? "translate-x-0" : "translate-x-full"}`}
           ref={asideRef}
         >
           <div className={sidebarStyles.sidebarHeader}>
@@ -403,12 +403,12 @@ function Sidebar() {
                     {levels.map((level) => (
                       <button
                         key={level.id}
-                        onClick={() => handleLeverlSelect(level.id)}
-                        className={`${sidebarStyles.levelButton} ${selectedLever === level.id ? `${level.color} ${sidebarStyles.levelButtonSelected}` : sidebarStyles.levelButtonNormal}`}
+                        onClick={() => handleLevelSelect(level.id)}
+                        className={`${sidebarStyles.levelButton} ${selectedLevel === level.id ? `${level.color} ${sidebarStyles.levelButtonSelected}` : sidebarStyles.levelButtonNormal}`}
                       >
                         <div className={sidebarStyles.levelButtonContent}>
                           <span
-                            className={`${sidebarStyles.levelIcon} ${selectedLever === level.id ? "bg-white/40" : "bg-gray-100"}`}
+                            className={`${sidebarStyles.levelIcon} ${selectedLevel === level.id ? "bg-white/40" : "bg-gray-100"}`}
                           >
                             {level.icon}
                           </span>
@@ -463,8 +463,8 @@ function Sidebar() {
                     </div>
 
                     <div className={sidebarStyles.mobileTechLevel}>
-                      {selectedLever
-                        ? `${selectedLever.charAt(0).toUppercase() + selectedLever.slice(1)} level`
+                      {selectedLevel
+                        ? `${selectedLevel.charAt(0).toUpperCase() + selectedLevel.slice(1)} level`
                         : "select level"}
                     </div>
                   </div>
@@ -477,14 +477,14 @@ function Sidebar() {
             </div>
           </div>
 
-          {selectedTech && !selectedLever && (
+          {selectedTech && !selectedLevel && (
             <div className={sidebarStyles.mobileLevels}>
               <div className={sidebarStyles.mobileLevelsContainer}>
                 {levels.map((l) => (
                   <button
                     className={sidebarStyles.mobileLevelButton}
                     key={l.id}
-                    onClick={() => handleLeverlSelect(l.id)}
+                    onClick={() => handleLevelSelect(l.id)}
                   >
                     {l.name}
                   </button>
@@ -558,7 +558,7 @@ function Sidebar() {
                 </div>
               </div>
             </div>
-          ) : !selectedLever ? (
+          ) : !selectedLevel ? (
             <div className={sidebarStyles.levelSelectionContainer}>
               <div className={sidebarStyles.levelSelectionContent}>
                 <div
@@ -567,7 +567,7 @@ function Sidebar() {
                   {technologies.find((t) => t.id === selectedTech).icon}
                 </div>
                 <h2 className={sidebarStyles.techSelectionTitle}>
-                  {technologies.find((t) => t.id === technologies).name} Quiz
+                  {technologies.find((t) => t.id === selectedTech).name} Quiz
                 </h2>
                 <p className={sidebarStyles.techSelectionDescription}>
                   select a difficulty level to begin your challenge
@@ -595,7 +595,7 @@ function Sidebar() {
                     Quiz Completed!
                   </h2>
                   <p className={sidebarStyles.resultsSubtitle}>
-                    You've completed the {selectedLever} level
+                    You've completed the {selectedLevel} level
                   </p>
                   <div
                     className={`${sidebarStyles.performanceBadge} ${performance.color}`}
@@ -660,8 +660,8 @@ function Sidebar() {
                 <div className={sidebarStyles.quizTitleContainer}>
                   <h1 className={sidebarStyles.quizTitle}>
                     {technologies.find((t) => t.id === selectedTech).name} -{" "}
-                    {selectedLever.charAt(0).toUpperCase() +
-                      selectedLever.slice(1)}{" "}
+                    {selectedLevel.charAt(0).toUpperCase() +
+                      selectedLevel.slice(1)}{" "}
                     Level
                   </h1>
                   <span className={sidebarStyles.quizCounter}>
